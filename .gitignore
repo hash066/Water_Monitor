@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.duckdb
+*.duckdb.wal
+console.log
+console-error.log
+server.log
+server-error.log
+.vscode/*
+!.vscode/tasks.json

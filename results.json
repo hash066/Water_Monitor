@@ -1,0 +1,480 @@
+[
+  {
+    "columns": [
+      "water_body_id",
+      "name",
+      "change_percent",
+      "rainfall_mm",
+      "occurred_at"
+    ],
+    "rows": [
+      [
+        1,
+        "Eastmere Lake",
+        45.8,
+        42.6,
+        "2026-10-12 12:00:00"
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        36.2,
+        28.4,
+        "2026-10-13 15:00:00"
+      ]
+    ],
+    "ms": 41.85,
+    "sql": "-- Query 1: Pollution events associated with recent rainfall\nSELECT\n    wb.water_body_id,\n    wb.name,\n    pe.change_percent,\n    w.rainfall_mm,\n    pe.occurred_at\nFROM WATER_BODY wb\nJOIN POLLUTION_EVENT pe\n    ON wb.water_body_id = pe.water_body_id\nJOIN WEATHER_RECORD w\n    ON pe.location_id = w.location_id\nWHERE pe.change_percent > 30\n  AND w.rainfall_mm > 0\n  AND w.recorded_at <= pe.occurred_at\n  AND w.recorded_at >= pe.occurred_at - INTERVAL '24 hours';",
+    "title": "Pollution after rainfall"
+  },
+  {
+    "columns": [
+      "sensor_id",
+      "water_body_id",
+      "anomaly_count"
+    ],
+    "rows": [
+      [
+        101,
+        1,
+        3
+      ],
+      [
+        201,
+        2,
+        2
+      ]
+    ],
+    "ms": 18.01,
+    "sql": "-- Query 2: Sensors with multiple anomalous readings\nSELECT\n    s.sensor_id,\n    s.water_body_id,\n    COUNT(m.measurement_id) AS anomaly_count\nFROM SENSOR s\nJOIN MEASUREMENT m\n    ON s.sensor_id = m.sensor_id\nWHERE m.is_anomalous = TRUE\nGROUP BY s.sensor_id, s.water_body_id\nHAVING COUNT(m.measurement_id) > 1\nORDER BY anomaly_count DESC;",
+    "title": "Repeated sensor anomalies"
+  },
+  {
+    "columns": [
+      "water_body_id",
+      "name",
+      "parameter_name",
+      "average_value",
+      "total_readings"
+    ],
+    "rows": [
+      [
+        4,
+        "Cedar Wetland",
+        "Turbidity (NTU)",
+        15.95,
+        20
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        "pH",
+        7.160000000000001,
+        20
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        "Turbidity (NTU)",
+        30.750000000000007,
+        20
+      ],
+      [
+        3,
+        "Northfield Lake",
+        "Turbidity (NTU)",
+        13.55,
+        20
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        "Turbidity (NTU)",
+        25.15,
+        20
+      ]
+    ],
+    "ms": 20.73,
+    "sql": "-- Query 3: Average measurement for each water body\nSELECT\n    wb.water_body_id,\n    wb.name,\n    m.parameter_name,\n    AVG(m.measured_value) AS average_value,\n    COUNT(m.measurement_id) AS total_readings\nFROM WATER_BODY wb\nJOIN SENSOR s\n    ON wb.water_body_id = s.water_body_id\nJOIN MEASUREMENT m\n    ON s.sensor_id = m.sensor_id\nGROUP BY\n    wb.water_body_id,\n    wb.name,\n    m.parameter_name\nORDER BY wb.name;",
+    "title": "Average measurements"
+  },
+  {
+    "columns": [
+      "water_body_id",
+      "water_body_name",
+      "factor_id",
+      "factor_name",
+      "factor_type"
+    ],
+    "rows": [
+      [
+        1,
+        "Eastmere Lake",
+        5,
+        "East drainage processing unit",
+        "industrial"
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        1,
+        "East catchment manufacturing zone",
+        "industrial"
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        2,
+        "South catchment textile estate",
+        "industrial"
+      ]
+    ],
+    "ms": 5.88,
+    "sql": "-- Query 4: Water bodies associated with industrial factors\nSELECT\n    wb.water_body_id,\n    wb.name AS water_body_name,\n    lf.factor_id,\n    lf.name AS factor_name,\n    lf.factor_type\nFROM WATER_BODY wb\nJOIN LAND_USE_FACTOR lf\n    ON wb.location_id = lf.location_id\nWHERE lf.factor_type = 'industrial'\nORDER BY wb.name;",
+    "title": "Industrial land-use factors"
+  },
+  {
+    "columns": [
+      "pollution_event_id",
+      "water_body_id",
+      "occurred_at",
+      "change_percent",
+      "valid_from",
+      "valid_to",
+      "condition"
+    ],
+    "rows": [
+      [
+        1005,
+        1,
+        "2026-10-14 10:00:00",
+        8.7,
+        "2026-10-12 12:00:00",
+        null,
+        "Deteriorating"
+      ],
+      [
+        1002,
+        2,
+        "2026-10-13 15:00:00",
+        36.2,
+        "2026-10-13 15:00:00",
+        null,
+        "Under observation"
+      ],
+      [
+        1003,
+        3,
+        "2026-10-13 11:00:00",
+        12.4,
+        "2022-01-01 00:00:00",
+        null,
+        "Stable"
+      ],
+      [
+        1001,
+        1,
+        "2026-10-12 12:00:00",
+        45.8,
+        "2026-10-12 12:00:00",
+        null,
+        "Deteriorating"
+      ],
+      [
+        1004,
+        4,
+        "2026-10-12 10:00:00",
+        33.5,
+        "2022-01-01 00:00:00",
+        null,
+        "Recovering"
+      ]
+    ],
+    "ms": 7.34,
+    "sql": "-- Query 5: Pollution events with historical states\nSELECT\n    pe.pollution_event_id,\n    pe.water_body_id,\n    pe.occurred_at,\n    pe.change_percent,\n    hs.valid_from,\n    hs.valid_to,\n    hs.condition\nFROM POLLUTION_EVENT pe\nJOIN HISTORICAL_STATE hs\n    ON pe.state_id = hs.state_id\nWHERE pe.change_percent > 0\nORDER BY pe.occurred_at DESC;",
+    "title": "Pollution and historical states"
+  },
+  {
+    "columns": [
+      "water_body_id",
+      "name",
+      "year",
+      "avg_turbidity",
+      "prev_year_avg",
+      "yoy_change_percent"
+    ],
+    "rows": [
+      [
+        4,
+        "Cedar Wetland",
+        2022,
+        13.55,
+        null,
+        null
+      ],
+      [
+        4,
+        "Cedar Wetland",
+        2023,
+        14.75,
+        13.55,
+        8.86
+      ],
+      [
+        4,
+        "Cedar Wetland",
+        2024,
+        15.95,
+        14.75,
+        8.14
+      ],
+      [
+        4,
+        "Cedar Wetland",
+        2025,
+        17.15,
+        15.95,
+        7.52
+      ],
+      [
+        4,
+        "Cedar Wetland",
+        2026,
+        18.35,
+        17.15,
+        7.0
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        2022,
+        26.549999999999997,
+        null,
+        null
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        2023,
+        27.749999999999996,
+        26.549999999999997,
+        4.52
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        2024,
+        28.95,
+        27.749999999999996,
+        4.32
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        2025,
+        30.150000000000002,
+        28.95,
+        4.15
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        2026,
+        40.35,
+        30.150000000000002,
+        33.83
+      ],
+      [
+        3,
+        "Northfield Lake",
+        2022,
+        10.55,
+        null,
+        null
+      ],
+      [
+        3,
+        "Northfield Lake",
+        2023,
+        11.75,
+        10.55,
+        11.37
+      ],
+      [
+        3,
+        "Northfield Lake",
+        2024,
+        12.95,
+        11.75,
+        10.21
+      ],
+      [
+        3,
+        "Northfield Lake",
+        2025,
+        14.149999999999999,
+        12.95,
+        9.27
+      ],
+      [
+        3,
+        "Northfield Lake",
+        2026,
+        18.35,
+        14.149999999999999,
+        29.68
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        2022,
+        21.55,
+        null,
+        null
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        2023,
+        22.749999999999996,
+        21.55,
+        5.57
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        2024,
+        23.95,
+        22.749999999999996,
+        5.27
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        2025,
+        25.150000000000002,
+        23.95,
+        5.01
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        2026,
+        32.35,
+        25.150000000000002,
+        28.63
+      ]
+    ],
+    "ms": 31.17,
+    "sql": "-- Query 6: Year-over-year turbidity trend\nSELECT\n    wb.water_body_id,\n    wb.name,\n    EXTRACT(YEAR FROM m.recorded_at) AS year,\n    AVG(m.measured_value) AS avg_turbidity,\n    LAG(AVG(m.measured_value)) OVER (\n        PARTITION BY wb.water_body_id\n        ORDER BY EXTRACT(YEAR FROM m.recorded_at)\n    ) AS prev_year_avg,\n    ROUND(\n        (AVG(m.measured_value) - LAG(AVG(m.measured_value)) OVER (\n            PARTITION BY wb.water_body_id\n            ORDER BY EXTRACT(YEAR FROM m.recorded_at)\n        )) / NULLIF(LAG(AVG(m.measured_value)) OVER (\n            PARTITION BY wb.water_body_id\n            ORDER BY EXTRACT(YEAR FROM m.recorded_at)\n        ), 0) * 100,\n        2\n    ) AS yoy_change_percent\nFROM WATER_BODY wb\nJOIN SENSOR s ON wb.water_body_id = s.water_body_id\nJOIN MEASUREMENT m ON s.sensor_id = m.sensor_id\nWHERE m.parameter_name = 'Turbidity (NTU)'\nGROUP BY wb.water_body_id, wb.name, EXTRACT(YEAR FROM m.recorded_at)\nORDER BY wb.name, year;",
+    "title": "Year-over-year turbidity trend"
+  },
+  {
+    "columns": [
+      "water_body_id",
+      "water_body_name",
+      "factor_name",
+      "factor_type",
+      "distance_km"
+    ],
+    "rows": [
+      [
+        1,
+        "Eastmere Lake",
+        "East drainage processing unit",
+        "industrial",
+        0.0
+      ],
+      [
+        2,
+        "Willow Reservoir",
+        "South catchment textile estate",
+        "industrial",
+        0.0
+      ],
+      [
+        1,
+        "Eastmere Lake",
+        "East catchment manufacturing zone",
+        "industrial",
+        0.0
+      ]
+    ],
+    "ms": 12.93,
+    "sql": "-- Query 7: Water bodies within 2 km of industrial land-use factors (Haversine)\nSELECT\n    wb.water_body_id,\n    wb.name AS water_body_name,\n    lf.name AS factor_name,\n    lf.factor_type,\n    ROUND(\n        6371 * 2 * ASIN(SQRT(\n            POWER(SIN(RADIANS(l_wb.latitude - l_lf.latitude) / 2), 2) +\n            COS(RADIANS(l_wb.latitude)) * COS(RADIANS(l_lf.latitude)) *\n            POWER(SIN(RADIANS(l_wb.longitude - l_lf.longitude) / 2), 2)\n        )),\n        3\n    ) AS distance_km\nFROM WATER_BODY wb\nJOIN LOCATION l_wb ON wb.location_id = l_wb.location_id\nCROSS JOIN LAND_USE_FACTOR lf\nJOIN LOCATION l_lf ON lf.location_id = l_lf.location_id\nWHERE lf.factor_type = 'industrial'\n  AND 6371 * 2 * ASIN(SQRT(\n        POWER(SIN(RADIANS(l_wb.latitude - l_lf.latitude) / 2), 2) +\n        COS(RADIANS(l_wb.latitude)) * COS(RADIANS(l_lf.latitude)) *\n        POWER(SIN(RADIANS(l_wb.longitude - l_lf.longitude) / 2), 2)\n    )) <= 2\nORDER BY distance_km;",
+    "title": "Spatial proximity to industry"
+  },
+  {
+    "columns": [
+      "sensor_id",
+      "water_body_name",
+      "parameter_name",
+      "measured_value",
+      "recorded_at",
+      "stored_flag",
+      "sensor_mean",
+      "sensor_std",
+      "computed_anomaly"
+    ],
+    "rows": [
+      [
+        101,
+        "Eastmere Lake",
+        "Turbidity (NTU)",
+        42.5,
+        "2026-10-11 10:00:00",
+        true,
+        30.75,
+        5.66,
+        true
+      ],
+      [
+        101,
+        "Eastmere Lake",
+        "Turbidity (NTU)",
+        44.2,
+        "2026-10-12 10:00:00",
+        true,
+        30.75,
+        5.66,
+        true
+      ],
+      [
+        201,
+        "Willow Reservoir",
+        "Turbidity (NTU)",
+        35.8,
+        "2026-10-10 10:00:00",
+        true,
+        25.15,
+        4.72,
+        true
+      ],
+      [
+        201,
+        "Willow Reservoir",
+        "Turbidity (NTU)",
+        37.5,
+        "2026-10-11 10:00:00",
+        true,
+        25.15,
+        4.72,
+        true
+      ],
+      [
+        301,
+        "Northfield Lake",
+        "Turbidity (NTU)",
+        24.8,
+        "2026-10-10 10:00:00",
+        true,
+        13.55,
+        3.72,
+        true
+      ]
+    ],
+    "ms": 9.57,
+    "sql": "-- Query 8: Computed anomaly detection \u2014 readings > 2 standard deviations above sensor mean\nSELECT\n    s.sensor_id,\n    wb.name AS water_body_name,\n    m.parameter_name,\n    m.measured_value,\n    m.recorded_at,\n    m.is_anomalous AS stored_flag,\n    ROUND(sensor_stats.mean_val, 2) AS sensor_mean,\n    ROUND(sensor_stats.std_val, 2) AS sensor_std,\n    CASE WHEN m.measured_value > sensor_stats.mean_val + 2 * sensor_stats.std_val\n         THEN TRUE ELSE FALSE END AS computed_anomaly\nFROM MEASUREMENT m\nJOIN SENSOR s ON m.sensor_id = s.sensor_id\nJOIN WATER_BODY wb ON s.water_body_id = wb.water_body_id\nJOIN (\n    SELECT sensor_id, AVG(measured_value) AS mean_val, STDDEV(measured_value) AS std_val\n    FROM MEASUREMENT\n    GROUP BY sensor_id\n) sensor_stats ON m.sensor_id = sensor_stats.sensor_id\nWHERE m.measured_value > sensor_stats.mean_val + 2 * sensor_stats.std_val\nORDER BY s.sensor_id, m.recorded_at;",
+    "title": "Computed anomaly detection"
+  }
+]

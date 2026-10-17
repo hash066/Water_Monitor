@@ -1,0 +1,12 @@
+CREATE TABLE LOCATION(location_id INTEGER PRIMARY KEY, region VARCHAR, latitude DOUBLE, longitude DOUBLE);
+CREATE TABLE WATER_BODY(water_body_id INTEGER PRIMARY KEY, name VARCHAR NOT NULL, location_id INTEGER REFERENCES LOCATION(location_id));
+CREATE TABLE SENSOR(sensor_id INTEGER PRIMARY KEY, water_body_id INTEGER REFERENCES WATER_BODY(water_body_id), installed_at DATE);
+CREATE TABLE MEASUREMENT(measurement_id INTEGER PRIMARY KEY, sensor_id INTEGER REFERENCES SENSOR(sensor_id), parameter_name VARCHAR, measured_value DOUBLE, recorded_at TIMESTAMP, is_anomalous BOOLEAN);
+CREATE TABLE WEATHER_RECORD(weather_id INTEGER PRIMARY KEY, location_id INTEGER REFERENCES LOCATION(location_id), rainfall_mm DOUBLE, recorded_at TIMESTAMP);
+CREATE TABLE LAND_USE_FACTOR(factor_id INTEGER PRIMARY KEY, location_id INTEGER REFERENCES LOCATION(location_id), name VARCHAR, factor_type VARCHAR);
+CREATE TABLE HISTORICAL_STATE(state_id INTEGER PRIMARY KEY, water_body_id INTEGER REFERENCES WATER_BODY(water_body_id), valid_from TIMESTAMP, valid_to TIMESTAMP, condition VARCHAR);
+CREATE TABLE POLLUTION_EVENT(pollution_event_id INTEGER PRIMARY KEY, water_body_id INTEGER REFERENCES WATER_BODY(water_body_id), location_id INTEGER REFERENCES LOCATION(location_id), state_id INTEGER REFERENCES HISTORICAL_STATE(state_id), change_percent DOUBLE, occurred_at TIMESTAMP);
+CREATE TABLE INSPECTION(inspection_id INTEGER PRIMARY KEY, water_body_id INTEGER REFERENCES WATER_BODY(water_body_id), inspected_at TIMESTAMP, findings VARCHAR);
+CREATE INDEX weather_location_time ON WEATHER_RECORD(location_id, recorded_at);
+CREATE INDEX measurement_sensor_time ON MEASUREMENT(sensor_id, recorded_at);
+CREATE INDEX pollution_location_time ON POLLUTION_EVENT(location_id, occurred_at);
