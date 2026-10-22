@@ -1,10 +1,13 @@
 # Normalization (1NF, 2NF, 3NF, BCNF) — RVCE Senior Format
 
 > **Format Reference:** RVCE Department of CSE — DBMS Lab (CD2521A)  
-> This document replicates the exact layout from the senior batch's `normalization.pdf`, including:
-> 1. Initial Tables with Functional Dependency (FD) Brackets
-> 2. Normalization Compliance Grid (1NF, 2NF, 3NF, BCNF with ✅ and ❌)
-> 3. Step-by-Step Decomposition Diagrams showing how tables with transitive dependencies split to reach BCNF.
+> Below are the high-resolution generated slide images matching the exact visual layout of your seniors' PDF.
+
+## 🖼️ Visual Slide 1: Tables with FD Brackets & Compliance Matrix
+![Slide 1 - Initial Tables and Compliance Grid](normalization_slide1.png)
+
+## 🖼️ Visual Slide 2: Decomposition to BCNF (Branching Splits)
+![Slide 2 - Step-by-Step BCNF Decomposition](normalization_slide2.png)
 
 ---
 
