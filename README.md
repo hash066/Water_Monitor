@@ -2,7 +2,7 @@
 
 > A relational database and interactive dashboard for monitoring water quality, pollution events, and environmental pressures across multiple catchment areas.
 
-AquaTrace models a complete environmental observation pipeline: geographic locations, water bodies, sensor networks, time-series measurements, weather records, land-use pressures, historical condition states, pollution events, and field inspections. The system is backed by an embedded DuckDB analytical database and served through a lightweight Python HTTP server with a single-page dashboard.
+AquaTrace models a complete environmental observation pipeline: geographic locations, water bodies, sensor networks, time-series measurements, weather records, land-use pressures, historical condition states, pollution events and field inspections. The system is backed by an embedded DuckDB analytical database and served through a lightweight Python HTTP server with a single-page dashboard.
 
 ---
 
