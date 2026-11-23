@@ -141,6 +141,7 @@ Eliminate multivalued nested arrays by flattening into separate candidate relati
 **2NF Definition:** A relation $R$ is in 2NF if and only if:
 1. It is in 1NF.
 2. **No non-prime attribute is partially dependent on any candidate key.** (Every non-prime attribute is *fully functionally dependent* on the entire primary key).
+Need to eliminate partial dependencies.
 
 ### Analysis of Dependencies:
 Consider a composite relation like:
